@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Valentine's Card</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #E5AFC7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 20%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.5;
+            z-index: 1;
+        }
+        body::before {
+            left: 0;
+            background-image: url('assets/lupine.jpg');
+        }
+        body::after {
+            width: 50%;
+            right: 0;
+            background-image: url('assets/lilac.jpg');
+            background-size: cover;
+            background-position: 10% 5%;
+        }
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .gif-box {
+            background: white;
+            margin: auto auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px dotted white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            max-width: 70%;
+            max-height: 70%;
+        }
+        .gif-preview {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+        .text-box, .result-box {
+            width: 300px;
+            background-color: rgba(224, 195, 229, 0.8);
+            padding: 20px;
+            margin: 20px auto;
+            border: 10px dotted white;
+            box-shadow: 0 0 0 rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        .yes-button, .no-button {
+            padding: 15px 30px;
+            cursor: pointer;
+            font-size: 16px;
+            border: 7px white;
+        }
+        .yes-button {
+            background-color: rgb(103, 201, 103);
+            color: white;
+        }
+        .no-button {
+            background-color: rgb(236, 115, 115);
+            color: white;
+        }
+        .random-yes {
+            position: absolute;
+            z-index: 10;
+        }
+        .hidden {
+            display: none;
+        }
+        .text-box, .result-box, .gif-box, .yes-button, .no-button {
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="gif-box" id="initialGifBox">
+            <img class="gif-preview" src="assets/puppy.gif">
+        </div>
+        <div class="text-box" id="textBox">
+            <p>Hello, Adira.
+            You have been super busy lately, so i want to make this short
+            and a lot of guys have probably asked you this already but</p>
+            <p>(Hint : click on the box)</p>
+        </div>
+
+        <div class="gif-box hidden" id="questionGifBox">
+            <img class="gif-preview" src="assets/marry-me-cat.gif">
+        </div>
+        <div class="text-box hidden" id="questionBox">
+            <p>Will you go out on a date with me and be my long distance valentine?</p>
+            <div class="button-container">
+                <button class="yes-button">Yes</button>
+                <button class="no-button">No</button>
+            </div>
+        </div>
+
+        <div class="gif-box hidden" id="yesGifBox">
+            <img class="gif-preview" src="assets/cat-jumping-cat.gif">
+        </div>
+        <div class="result-box hidden" id="yesResultBox">
+            <p>Thank youuuu!!</p>
+            <p>Illyyyyyy </p>
+            <p>I will do my best for you..</p>
+        </div>
+
+        <div class="gif-box hidden" id="noGifBox">
+            <img class="gif-preview" src="assets/sad-cry.gif">
+        </div>
+        <div class="result-box hidden" id="noResultBox">
+            <p>Okay, I won't disturb you then... tc bbg 😔</p>
+        </div>
+    </div>
+
+    <audio id="initialBackgroundMusic" loop>
+        <source src="assets/main.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="yesBackgroundMusic" loop>
+        <source src="assets/yes.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="noBackgroundMusic" loop>
+        <source src="assets/no.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let noClickCount = 0;
+let currentMusic = null;
+
+function playMusic(musicElement) {
+    if (currentMusic && currentMusic !== musicElement) {
+        currentMusic.pause();
+        currentMusic.currentTime = 0;
+    }
+    
+    musicElement.play();
+    currentMusic = musicElement;
+}
+
+window.addEventListener('load', function() {
+    const initialMusic = document.getElementById('initialBackgroundMusic');
+    playMusic(initialMusic);
+});
+
+document.getElementById('textBox').addEventListener('click', function() {
+    const initialMusic = document.getElementById('initialBackgroundMusic');
+    playMusic(initialMusic);
+
+    document.getElementById('initialGifBox').classList.add('hidden');
+    document.getElementById('textBox').classList.add('hidden');
+    document.getElementById('questionGifBox').classList.remove('hidden');
+    document.getElementById('questionBox').classList.remove('hidden');
+});
+
+function createRandomYesButton() {
+    const button = document.createElement('button');
+    button.className = 'yes-button random-yes';
+    button.textContent = 'Yes';
+    
+    const maxX = window.innerWidth - 200;
+    const maxY = window.innerHeight - 60;
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+    
+    button.style.left = randomX + 'px';
+    button.style.top = randomY + 'px';
+    
+    button.addEventListener('click', function() {
+        const yesMusic = document.getElementById('yesBackgroundMusic');
+        playMusic(yesMusic);
+
+        document.getElementById('questionGifBox').classList.add('hidden');
+        document.getElementById('questionBox').classList.add('hidden');
+        document.getElementById('yesGifBox').classList.remove('hidden');
+        document.getElementById('yesResultBox').classList.remove('hidden');
+        
+        document.querySelectorAll('.random-yes').forEach(btn => btn.remove());
+    });
+
+    document.body.appendChild(button);
+}
+
+document.querySelector('.yes-button').addEventListener('click', function() {
+    const yesMusic = document.getElementById('yesBackgroundMusic');
+    playMusic(yesMusic);
+
+    document.getElementById('questionGifBox').classList.add('hidden');
+    document.getElementById('questionBox').classList.add('hidden');
+    document.getElementById('yesGifBox').classList.remove('hidden');
+    document.getElementById('yesResultBox').classList.remove('hidden');
+    
+    document.querySelectorAll('.random-yes').forEach(btn => btn.remove());
+});
+
+document.querySelector('.no-button').addEventListener('click', function() {
+    noClickCount++;
+    
+    if (noClickCount >= 15) {
+        document.getElementById('questionGifBox').classList.add('hidden');
+        document.getElementById('questionBox').classList.add('hidden');
+        document.getElementById('noGifBox').classList.remove('hidden');
+        document.getElementById('noResultBox').classList.remove('hidden');
+        
+        document.querySelectorAll('.random-yes').forEach(btn => btn.remove());
+        
+
+        setTimeout(() => {
+            const noMusic = document.getElementById('noBackgroundMusic');
+            playMusic(noMusic);
+        }, 100);
+    } else {
+        createRandomYesButton();
+    }
+});
+    </script>
+</body>
+</html>
